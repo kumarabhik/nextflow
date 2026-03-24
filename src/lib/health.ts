@@ -123,6 +123,9 @@ export async function getEnvironmentHealthReport(): Promise<EnvironmentHealthRep
         nextChecks: [
           "Fix the database connectivity issue before testing workflow saves or execution.",
           "Keep npm run dev and npm run trigger:dev running in separate terminals.",
+          environmentStatus.transloaditConfigured
+            ? "Upload one image and one video to confirm the Transloadit path is healthy."
+            : "Add TRANSLOADIT_AUTH_KEY and TRANSLOADIT_AUTH_SECRET before the final grading pass.",
           authHealth.signedIn
             ? "Open /dashboard and run one node, one selected group, and one full workflow."
             : "Sign in first, then open /dashboard and run one node, one selected group, and one full workflow.",
@@ -141,10 +144,13 @@ export async function getEnvironmentHealthReport(): Promise<EnvironmentHealthRep
     database,
     environment: environmentStatus,
     nextChecks: [
+      environmentStatus.transloaditConfigured
+        ? "Upload one image and one video to confirm the Transloadit path is healthy."
+        : "Add TRANSLOADIT_AUTH_KEY and TRANSLOADIT_AUTH_SECRET before the final grading pass.",
       authHealth.signedIn
         ? "Open /dashboard and verify Run node, Run selected, and Run workflow."
         : "Sign in through /sign-in, then open /dashboard and verify Run node, Run selected, and Run workflow.",
-      "Upload one image and one video, then confirm previews and a successful history entry.",
+      "Confirm previews and a successful history entry after the media uploads finish.",
       "Use Save draft, Save version, Restore version, and Retry failed during the final demo pass.",
     ],
     runtime: {

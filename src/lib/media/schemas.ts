@@ -7,6 +7,7 @@ export const mediaUploadResponseSchema = z.object({
   assetUrl: z.string().url(),
   fileName: z.string(),
   mimeType: z.string(),
+  provider: z.enum(["local", "transloadit"]),
   sizeBytes: z.number().int().nonnegative(),
 });
 

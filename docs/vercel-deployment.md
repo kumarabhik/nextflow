@@ -27,6 +27,8 @@ Copy these from your local root [`.env`](C:\Users\kumar\Downloads\XOXO\Assignmen
 - `GEMINI_API_KEY`
 - `TRIGGER_SECRET_KEY`
 - `TRIGGER_PROJECT_REF`
+- `TRANSLOADIT_AUTH_KEY`
+- `TRANSLOADIT_AUTH_SECRET`
 
 ## Deployment Steps
 

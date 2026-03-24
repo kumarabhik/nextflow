@@ -59,6 +59,7 @@ export type EnvironmentStatus = {
   geminiConfigured: boolean;
   issues: string[];
   remoteExecutionReady: boolean;
+  transloaditConfigured: boolean;
   triggerConfigured: boolean;
 };
 

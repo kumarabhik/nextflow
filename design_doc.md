@@ -1398,3 +1398,29 @@ I paired that with a last responsive/polish pass on the canvas overlay so the ex
 3. Import the repo into Vercel and add the production env vars.
 4. Deploy the app and update `NEXT_PUBLIC_APP_URL` to the deployed URL.
 5. Recheck `/api/health` and one production workflow run.
+
+## Session 24 Summary
+
+Implemented the missing Transloadit alignment so the project matches the assignment stack more closely. Media uploads now support a real Transloadit-first server path: the upload route sends the file to Transloadit, waits for the assembly to complete, downloads the uploaded result immediately, and persists that file into the app's own media storage. This keeps the grading story honest while preserving the stable persisted URLs that the rest of the workflow engine depends on.
+
+I also updated the environment and deployment docs so `TRANSLOADIT_AUTH_KEY` and `TRANSLOADIT_AUTH_SECRET` are treated as part of the assignment-grade setup instead of a purely optional extra. The code builds cleanly, but the local `.env` still does not contain those two keys yet, so the new path will not become active until you add them.
+
+### Decisions made
+
+- Use Transloadit as the upload entry point while still persisting media locally for durable workflow execution.
+- Keep a local fallback path available in code, but treat missing Transloadit keys as an assignment-readiness issue in environment status.
+- Surface the upload provider back to the node UI so successful uploads can say they came through Transloadit.
+
+### Open risks
+
+- The Transloadit path is compiled and wired, but it still needs one live upload test with real credentials.
+- Free-tier Transloadit limits can still reject oversized files, so demo assets should stay comfortably small.
+- Vercel and local `.env` both still need the two Transloadit keys before final submission validation.
+
+### Next exact steps
+
+1. Add `TRANSLOADIT_AUTH_KEY` and `TRANSLOADIT_AUTH_SECRET` to the root `.env`.
+2. Add the same two keys to Vercel env vars.
+3. Upload one image and one video from the dashboard and confirm the helper text says the media came through Transloadit.
+4. Run the sample workflow again and confirm history still records a successful run.
+5. Do the final production deploy and browser signoff.

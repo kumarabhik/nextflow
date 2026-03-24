@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireAuthenticatedRoute } from "@/lib/auth/route-auth";
 import { createMediaAsset } from "@/lib/media/server";
+import { TransloaditUploadError } from "@/lib/media/transloadit";
 
 export async function POST(request: Request) {
   const authError = await requireAuthenticatedRoute(
@@ -34,10 +35,26 @@ export async function POST(request: Request) {
     );
   }
 
-  const result = await createMediaAsset({
-    file,
-    kind,
-  });
+  let result;
+
+  try {
+    result = await createMediaAsset({
+      file,
+      kind,
+    });
+  } catch (error) {
+    const message =
+      error instanceof TransloaditUploadError
+        ? error.message
+        : "Media upload failed while storing the asset.";
+
+    return NextResponse.json(
+      {
+        message,
+      },
+      { status: 502 },
+    );
+  }
 
   if (!result) {
     return NextResponse.json(

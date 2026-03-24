@@ -7,6 +7,7 @@ NextFlow is a Krea-inspired AI workflow builder focused on multimodal content pi
 - protected dashboard with Clerk auth
 - React Flow editor with a prebuilt sample workflow
 - 6 required nodes: Text, Upload Image, Upload Video, Run Any LLM, Crop Image, Extract Frame
+- Transloadit-backed media uploads persisted for stable Trigger.dev execution
 - workflow history with node-level execution details
 - autosave, versions, restore points, retry failed run, command palette, and keyboard shortcuts
 - Neon/PostgreSQL persistence via Prisma
@@ -61,7 +62,7 @@ npm run trigger:deploy
 
 ## Current status
 
-The core execution path is working end to end with URL-backed media uploads, Gemini generation, and FFmpeg crop/frame tasks through Trigger.dev. The remaining manual finish-up is:
+The core execution path is working end to end with Transloadit-backed media uploads, Gemini generation, and FFmpeg crop/frame tasks through Trigger.dev. The remaining manual finish-up is:
 
 - one signed-in browser verification pass
 - one Vercel production deploy

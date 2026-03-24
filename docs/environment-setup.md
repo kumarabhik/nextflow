@@ -19,22 +19,18 @@ DATABASE_URL="postgresql://..."
 GEMINI_API_KEY="AIza..."
 TRIGGER_SECRET_KEY="tr_dev_..."
 TRIGGER_PROJECT_REF="proj_..."
-```
-
-## Optional
-
-These are not required by the current code path:
-
-```env
 TRANSLOADIT_AUTH_KEY="..."
 TRANSLOADIT_AUTH_SECRET="..."
 ```
+
+For assignment compliance, add the Transloadit keys as well so image and video uploads use the requested provider instead of the local fallback path.
 
 ## Important Notes
 
 - The root app is the workspace root, not the leftover [`nextflow/`](C:\Users\kumar\Downloads\XOXO\Assignment\nextflow) folder.
 - A placeholder `DATABASE_URL` such as `johndoe:randompassword@localhost:5432/mydb` is treated as not configured.
 - `Trigger.dev` is only considered ready when both `TRIGGER_SECRET_KEY` and `TRIGGER_PROJECT_REF` are present.
+- `Transloadit` is treated as part of the full assignment-grade stack, so missing Transloadit keys will keep the setup status from reading fully ready.
 
 ## Health Check
 

@@ -1,8 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/lib/db";
-import { clientEnv, isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
+import {
+  clientEnv,
+  isClerkConfigured,
+  isDatabaseConfigured,
+  isTransloaditConfigured,
+} from "@/lib/env";
 import { mediaKindSchema } from "@/lib/media/schemas";
+import { uploadAndFetchTransloaditFile } from "@/lib/media/transloadit";
 
 async function resolveMediaActorId() {
   if (!isClerkConfigured) {
@@ -29,14 +35,21 @@ export async function createMediaAsset(input: {
   }
 
   const kind = mediaKindSchema.parse(input.kind);
-  const bytes = new Uint8Array(await input.file.arrayBuffer());
+  const upload = isTransloaditConfigured
+    ? await uploadAndFetchTransloaditFile(input.file)
+    : {
+        bytes: new Uint8Array(await input.file.arrayBuffer()),
+        fileName: input.file.name,
+        mimeType: input.file.type || "application/octet-stream",
+        sizeBytes: input.file.size,
+      };
   const asset = await db.mediaAsset.create({
     data: {
-      bytes,
-      fileName: input.file.name,
+      bytes: upload.bytes,
+      fileName: upload.fileName,
       kind,
-      mimeType: input.file.type || "application/octet-stream",
-      sizeBytes: bytes.byteLength,
+      mimeType: upload.mimeType,
+      sizeBytes: upload.sizeBytes,
       userId: actorId,
     },
   });
@@ -46,6 +59,7 @@ export async function createMediaAsset(input: {
     assetUrl: buildMediaAssetUrl(asset.id),
     fileName: asset.fileName,
     mimeType: asset.mimeType,
+    provider: isTransloaditConfigured ? "transloadit" : "local",
     sizeBytes: asset.sizeBytes,
   };
 }

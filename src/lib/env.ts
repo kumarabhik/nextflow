@@ -71,6 +71,9 @@ export const isTriggerConfigured = Boolean(
 );
 
 export const isGeminiConfigured = Boolean(serverEnv.GEMINI_API_KEY);
+export const isTransloaditConfigured = Boolean(
+  serverEnv.TRANSLOADIT_AUTH_KEY && serverEnv.TRANSLOADIT_AUTH_SECRET,
+);
 
 export const environmentStatus: EnvironmentStatus = {
   clerkConfigured: isClerkConfigured,
@@ -87,9 +90,14 @@ export const environmentStatus: EnvironmentStatus = {
     !serverEnv.TRIGGER_SECRET_KEY ? "TRIGGER_SECRET_KEY missing" : null,
     !serverEnv.TRIGGER_PROJECT_REF ? "TRIGGER_PROJECT_REF missing" : null,
     !serverEnv.GEMINI_API_KEY ? "GEMINI_API_KEY missing" : null,
+    !isTransloaditConfigured ? "Transloadit keys missing" : null,
   ].filter((issue): issue is string => Boolean(issue)),
   remoteExecutionReady: Boolean(
-    isDatabaseConfigured && isTriggerConfigured && isGeminiConfigured,
+    isDatabaseConfigured &&
+      isTriggerConfigured &&
+      isGeminiConfigured &&
+      isTransloaditConfigured,
   ),
+  transloaditConfigured: isTransloaditConfigured,
   triggerConfigured: isTriggerConfigured,
 };

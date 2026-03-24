@@ -277,7 +277,10 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
       URL.revokeObjectURL(previewUrl);
 
       updateField({
-        helperText: `Stored at a persisted asset URL for Trigger.dev execution (${formatFileSize(upload.sizeBytes)}).`,
+        helperText:
+          upload.provider === "transloadit"
+            ? `Uploaded through Transloadit and persisted for Trigger.dev execution (${formatFileSize(upload.sizeBytes)}).`
+            : `Stored at a persisted asset URL for Trigger.dev execution (${formatFileSize(upload.sizeBytes)}).`,
         mediaAssetId: upload.assetId,
         mediaDataUrl: undefined,
         mediaMimeType: upload.mimeType,
