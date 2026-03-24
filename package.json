@@ -1,0 +1,47 @@
+{
+  "name": "nextflow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit -p tsconfig.sourcecheck.json",
+    "verify:local": "node scripts/verify-local.mjs",
+    "trigger:dev": "trigger dev",
+    "trigger:deploy": "trigger deploy"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^7.0.6",
+    "@google/genai": "^1.46.0",
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.5.0",
+    "@trigger.dev/build": "4.4.3",
+    "@trigger.dev/sdk": "4.4.3",
+    "@xyflow/react": "^12.10.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.577.0",
+    "next": "16.2.1",
+    "pg": "^8.20.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.1",
+    "prisma": "^7.5.0",
+    "tailwindcss": "^4",
+    "trigger.dev": "^4.4.3",
+    "typescript": "^5"
+  }
+}

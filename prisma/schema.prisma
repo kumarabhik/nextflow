@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WorkflowStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum WorkflowRunStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILED
+  PARTIAL
+}
+
+enum WorkflowRunScope {
+  FULL
+  SELECTED
+  SINGLE
+  RETRY
+}
+
+enum NodeRunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  SKIPPED
+  WAITING
+}
+
+model Workflow {
+  id                  String            @id @default(cuid())
+  userId              String
+  name                String
+  description         String?
+  status              WorkflowStatus    @default(DRAFT)
+  graphJson           Json
+  viewportJson        Json?
+  latestVersionNumber Int               @default(1)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  versions            WorkflowVersion[]
+  runs                WorkflowRun[]
+  snapshots           EditorSnapshot[]
+
+  @@index([userId, updatedAt(sort: Desc)])
+  @@index([status, updatedAt(sort: Desc)])
+}
+
+model WorkflowVersion {
+  id            String   @id @default(cuid())
+  workflowId    String
+  versionNumber Int
+  graphJson     Json
+  createdAt     DateTime @default(now())
+  createdBy     String?
+  workflow      Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowId, versionNumber])
+  @@index([workflowId, createdAt(sort: Desc)])
+}
+
+model WorkflowRun {
+  id              String            @id @default(cuid())
+  workflowId      String
+  userId          String
+  status          WorkflowRunStatus @default(QUEUED)
+  scope           WorkflowRunScope
+  selectedNodeIds Json?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  durationMs      Int?
+  triggerRunId    String?
+  errorMessage    String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  workflow        Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  nodeRuns        NodeRun[]
+
+  @@index([workflowId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model NodeRun {
+  id                 String        @id @default(cuid())
+  workflowRunId      String
+  nodeId             String
+  nodeType           String
+  status             NodeRunStatus @default(PENDING)
+  dependencyNodeIds  Json?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  durationMs         Int?
+  inputSnapshotJson  Json?
+  outputSnapshotJson Json?
+  errorMessage       String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  workflowRun        WorkflowRun   @relation(fields: [workflowRunId], references: [id], onDelete: Cascade)
+
+  @@index([workflowRunId, createdAt(sort: Asc)])
+  @@index([nodeId, createdAt(sort: Desc)])
+}
+
+model EditorSnapshot {
+  id           String   @id @default(cuid())
+  workflowId   String
+  source       String
+  snapshotJson Json
+  createdAt    DateTime @default(now())
+  workflow     Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId, createdAt(sort: Desc)])
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  userId    String
+  kind      String
+  fileName  String
+  mimeType  String
+  bytes     Bytes
+  sizeBytes Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([kind, createdAt(sort: Desc)])
+}
