@@ -1450,3 +1450,26 @@ I also checked the main routes directly against the running local app. Public ro
 3. Sign in on the deployed app.
 4. Upload one image and one video, then run the sample workflow.
 5. Record the final demo once that pass succeeds.
+
+## Session 26 Summary
+
+Improved the visual atmosphere of the editor without changing the workflow engine. The canvas was previously sitting on a mostly flat dark fill with a basic dot grid, which made the product feel unfinished. I upgraded it to a layered studio-style backdrop with ambient cyan, teal, and violet light blooms, a softer vignette, and a quieter large-format grid so the automation graph feels more premium while still staying readable.
+
+I kept the interaction model unchanged: the React Flow canvas, minimap, controls, and node interactions all behave the same, and the background work remains purely presentational. After the change, I ran a full production build again and it completed successfully.
+
+### Decisions made
+
+- Improve the background through reusable global canvas-backdrop classes rather than one-off inline styling.
+- Keep the palette aligned with the existing cyan/teal editor language instead of introducing a new color system this late.
+- Avoid overly busy motion or decorative assets that could make the graph harder to read during demo recordings.
+
+### Open risks
+
+- This improves atmosphere, but a final human eye pass on the deployed app is still the best way to judge whether the new background is subtle enough.
+- If the user wants an even cleaner enterprise look, the background intensity may need one more reduction after seeing it on the production URL.
+
+### Next exact steps
+
+1. Refresh the local dashboard and review the new canvas background.
+2. Check the deployed Vercel app once env vars are confirmed.
+3. Run one production workflow to ensure the denser backdrop still keeps nodes legible in the demo.

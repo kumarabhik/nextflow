@@ -325,11 +325,11 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
 
   if (!isExpanded) {
     return (
-      <article className="group relative w-[88px]">
+      <article className="group relative w-[88px]" style={{ transformStyle: "preserve-3d" }}>
         {selected ? (
-          <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center rounded-full border border-white/10 bg-[#0f131a]/96 px-2 py-2 shadow-xl shadow-black/30">
+          <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center rounded-xl border border-white/10 bg-[#0f131a]/96 px-3 py-2 shadow-2xl shadow-black/40 backdrop-blur">
             <button
-              className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-100 transition hover:bg-red-400/15"
+              className="rounded-lg border border-red-400/25 bg-red-400/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-red-100 transition-all hover:bg-red-400/20 hover:shadow-lg hover:shadow-red-500/10"
               onClick={(event) => {
                 event.stopPropagation();
                 deleteNode(id);
@@ -344,9 +344,9 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
 
         <button
           className={cn(
-            "relative grid h-[84px] w-[84px] place-items-center overflow-hidden rounded-full border bg-[#10131a]/96 text-white shadow-2xl shadow-black/30 transition",
+            "relative grid h-[84px] w-[84px] place-items-center overflow-hidden rounded-2xl border bg-[#10131a]/96 text-white shadow-2xl shadow-black/40 transition-all duration-300 hover:scale-110 hover:shadow-cyan-500/10",
             selected
-              ? "border-cyan-300/70 shadow-cyan-500/15"
+              ? "border-cyan-300/70 shadow-cyan-500/20"
               : "border-white/10 hover:border-white/20",
             nodeRuntime.status === "queued" &&
               "nextflow-runtime-glow-queued border-cyan-300/60 shadow-cyan-500/10",
@@ -450,9 +450,9 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
   return (
     <article
       className={cn(
-        "relative w-[340px] rounded-[28px] border bg-[#10131a]/95 p-4 text-white shadow-2xl shadow-black/30 backdrop-blur transition",
+        "relative w-[340px] rounded-2xl border bg-[#10131a]/95 p-5 text-white shadow-2xl shadow-black/40 backdrop-blur-md transition-all",
         selected
-          ? "border-cyan-300/70 shadow-cyan-500/15"
+          ? "border-cyan-300/60 shadow-cyan-500/15"
           : "border-white/10 hover:border-white/20",
         nodeRuntime.status === "queued" &&
           "nextflow-runtime-glow-queued border-cyan-300/60 shadow-cyan-500/10",
@@ -465,9 +465,9 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
       )}
     >
       {selected ? (
-        <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center rounded-full border border-white/10 bg-[#0f131a]/96 px-2 py-2 shadow-xl shadow-black/30">
+        <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center rounded-xl border border-white/10 bg-[#0f131a]/96 px-3 py-2 shadow-2xl shadow-black/40 backdrop-blur">
           <button
-            className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-100 transition hover:bg-red-400/15"
+            className="rounded-lg border border-red-400/25 bg-red-400/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-red-100 transition-all hover:bg-red-400/20 hover:shadow-lg hover:shadow-red-500/10"
             onClick={(event) => {
               event.stopPropagation();
               deleteNode(id);

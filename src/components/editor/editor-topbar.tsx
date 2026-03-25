@@ -85,14 +85,14 @@ export function EditorTopbar({ environmentStatus }: EditorTopbarProps) {
     environmentStatus.remoteExecutionReady && environmentStatus.clerkConfigured;
 
   const toolbarGroupClass =
-    "flex flex-wrap items-center gap-2 rounded-[22px] border border-white/10 bg-white/[0.03] px-2 py-2";
+    "flex flex-wrap items-center gap-1.5 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-2.5 py-2 shadow-xl shadow-black/10 backdrop-blur-md";
   const neutralButtonClass =
-    "rounded-full border border-white/10 bg-transparent px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-50";
+    "rounded-xl border border-transparent bg-transparent px-3 py-2 text-sm font-medium text-slate-300 transition-all hover:border-white/10 hover:bg-white/[0.04] hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-300";
   const runButtonClass =
-    "rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-50";
+    "rounded-xl border border-cyan-400/25 bg-gradient-to-r from-cyan-400/15 to-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 shadow-lg shadow-cyan-500/10 transition-all hover:border-cyan-400/40 hover:from-cyan-400/20 hover:to-cyan-400/15 hover:shadow-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0b0d11]/96 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-gradient-to-b from-[#0f1117]/98 to-[#0b0d11]/95 backdrop-blur-xl depth-shadow">
       <input
         ref={fileInputRef}
         accept="application/json"
@@ -119,24 +119,27 @@ export function EditorTopbar({ environmentStatus }: EditorTopbarProps) {
 
       <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-sky-400 via-cyan-300 to-emerald-300 text-slate-950 shadow-lg shadow-cyan-500/20">
-            <Sparkles className="h-5 w-5" />
+          <div className="group relative">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyan-400 via-cyan-300 to-emerald-300 text-slate-950 shadow-lg shadow-cyan-500/25 transition-transform hover:scale-105">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-300 opacity-0 blur-lg transition-opacity group-hover:opacity-40" />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-xs uppercase tracking-[0.24em] text-cyan-200/65">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-300/80">
                 NextFlow
               </p>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-slate-400">
+              <span className="rounded-lg border border-white/8 bg-white/[0.03] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500">
                 Automation Bar
               </span>
               <span
-                className={`rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] ${saveStateStyles[saveState]}`}
+                className={`rounded-lg border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.15em] ${saveStateStyles[saveState]}`}
               >
                 {saveState}
               </span>
             </div>
-            <h1 className="truncate text-lg font-semibold text-white">
+            <h1 className="truncate text-base font-semibold text-white">
               {workflowName}
             </h1>
           </div>
@@ -165,7 +168,7 @@ export function EditorTopbar({ environmentStatus }: EditorTopbarProps) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/8 px-4 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.04] bg-gradient-to-b from-white/[0.01] to-transparent px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-center gap-3">
           <div className={toolbarGroupClass}>
             <button
@@ -312,13 +315,16 @@ export function EditorTopbar({ environmentStatus }: EditorTopbarProps) {
               Selected
             </button>
             <button
-              className="rounded-full bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:bg-cyan-100"
+              className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-cyan-400 to-cyan-300 px-5 py-2 text-sm font-semibold text-slate-950 shadow-xl shadow-cyan-500/25 transition-all hover:shadow-cyan-500/40 hover:scale-105 disabled:cursor-not-allowed disabled:from-cyan-300/70 disabled:to-cyan-200/70 disabled:shadow-cyan-500/10"
               disabled={isExecuting}
               onClick={() => void runFullWorkflow()}
               type="button"
             >
-              <Play className="mr-2 inline h-4 w-4" />
-              {isExecuting ? "Running..." : "Run"}
+              <span className="relative z-10 flex items-center gap-2">
+                <Play className="h-4 w-4" />
+                {isExecuting ? "Running..." : "Run"}
+              </span>
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/25 to-white/0 transition-transform group-hover:translate-x-full" />
             </button>
           </div>
         </div>
