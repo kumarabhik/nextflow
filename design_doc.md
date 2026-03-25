@@ -1424,3 +1424,29 @@ I also updated the environment and deployment docs so `TRANSLOADIT_AUTH_KEY` and
 3. Upload one image and one video from the dashboard and confirm the helper text says the media came through Transloadit.
 4. Run the sample workflow again and confirm history still records a successful run.
 5. Do the final production deploy and browser signoff.
+
+## Session 25 Summary
+
+Ran a final local health and route audit after adding the Transloadit keys. The health endpoint now reports a fully ready stack: Clerk, PostgreSQL, Trigger.dev, Gemini, FFmpeg/FFprobe, and Transloadit are all configured. The only health warning left in terminal verification is the expected one that there is no active signed-in Clerk browser session attached to a shell request.
+
+I also checked the main routes directly against the running local app. Public routes such as `/`, `/sign-in`, `/sign-up`, and `/api/health` are responding correctly. Protected routes such as `/dashboard`, `/api/workflows/current`, `/api/workflows/history`, `/api/workflows/version`, `/api/workflows/runs`, `/api/execution`, and `/api/media/upload` all return the expected auth-gated responses when no browser session is attached. The fake media asset probe returned `404`, which is also the correct behavior for a nonexistent asset id.
+
+### Decisions made
+
+- Treat the current terminal-only verification pass as infrastructure-complete, while keeping signed-in browser verification as the final manual proof.
+- Use correct route methods during endpoint checks so `401` and `404` are interpreted accurately instead of being confused with method errors.
+- Keep the roadmap honest: local stack is healthy, but browser demo validation and final Vercel deploy are still manual finish steps.
+
+### Open risks
+
+- A signed-in browser upload/run pass is still needed to prove the live Transloadit path with your real user session.
+- Final Vercel deployment still depends on adding the same Transloadit keys to project env vars.
+- Clerk production redirects and domains should still be rechecked once the deployed URL exists.
+
+### Next exact steps
+
+1. Add the Transloadit keys to Vercel.
+2. Deploy on Vercel.
+3. Sign in on the deployed app.
+4. Upload one image and one video, then run the sample workflow.
+5. Record the final demo once that pass succeeds.
