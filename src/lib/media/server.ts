@@ -8,7 +8,7 @@ import {
   isTransloaditConfigured,
 } from "@/lib/env";
 import { mediaKindSchema } from "@/lib/media/schemas";
-import { uploadAndFetchTransloaditFile } from "@/lib/media/transloadit";
+import { uploadTransloaditFile } from "@/lib/media/transloadit";
 
 async function resolveMediaActorId() {
   if (!isClerkConfigured) {
@@ -30,19 +30,36 @@ export async function createMediaAsset(input: {
 }) {
   const actorId = await resolveMediaActorId();
 
-  if (!actorId || !isDatabaseConfigured) {
+  if (!actorId) {
     return null;
   }
 
   const kind = mediaKindSchema.parse(input.kind);
-  const upload = isTransloaditConfigured
-    ? await uploadAndFetchTransloaditFile(input.file)
-    : {
-        bytes: new Uint8Array(await input.file.arrayBuffer()),
-        fileName: input.file.name,
-        mimeType: input.file.type || "application/octet-stream",
-        sizeBytes: input.file.size,
-      };
+
+  if (isTransloaditConfigured) {
+    const upload = await uploadTransloaditFile(input.file);
+
+    return {
+      assetId: upload.assetId,
+      assetUrl: upload.assetUrl,
+      fileName: upload.fileName,
+      mimeType: upload.mimeType,
+      provider: "transloadit" as const,
+      sizeBytes: upload.sizeBytes,
+    };
+  }
+
+  if (!isDatabaseConfigured) {
+    return null;
+  }
+
+  const upload = {
+    bytes: Buffer.from(await input.file.arrayBuffer()),
+    fileName: input.file.name,
+    mimeType: input.file.type || "application/octet-stream",
+    sizeBytes: input.file.size,
+  };
+
   const asset = await db.mediaAsset.create({
     data: {
       bytes: upload.bytes,
@@ -59,7 +76,7 @@ export async function createMediaAsset(input: {
     assetUrl: buildMediaAssetUrl(asset.id),
     fileName: asset.fileName,
     mimeType: asset.mimeType,
-    provider: isTransloaditConfigured ? "transloadit" : "local",
+    provider: "local" as const,
     sizeBytes: asset.sizeBytes,
   };
 }

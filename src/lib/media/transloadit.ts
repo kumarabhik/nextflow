@@ -34,6 +34,14 @@ export class TransloaditUploadError extends Error {
   }
 }
 
+export type TransloaditUploadedAsset = {
+  assetId: string;
+  assetUrl: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+};
+
 function assertTransloaditCredentials() {
   if (!serverEnv.TRANSLOADIT_AUTH_KEY || !serverEnv.TRANSLOADIT_AUTH_SECRET) {
     throw new TransloaditUploadError(
@@ -48,13 +56,15 @@ async function getTransloaditBearerToken() {
   const credentials = Buffer.from(
     `${serverEnv.TRANSLOADIT_AUTH_KEY}:${serverEnv.TRANSLOADIT_AUTH_SECRET}`,
   ).toString("base64");
+  const body = new URLSearchParams({
+    grant_type: "client_credentials",
+    scope: "assemblies:read assemblies:write",
+  });
   const response = await fetch(`${TRANSLOADIT_API_BASE}/token`, {
-    body: JSON.stringify({
-      scopes: ["assemblies.create", "assemblies.read"],
-    }),
+    body,
     headers: {
       Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
     method: "POST",
   });
@@ -139,7 +149,9 @@ function resolveUploadedFile(assembly: TransloaditAssemblyResponse) {
   return file;
 }
 
-export async function uploadAndFetchTransloaditFile(file: File) {
+export async function uploadTransloaditFile(
+  file: File,
+): Promise<TransloaditUploadedAsset> {
   const accessToken = await getTransloaditBearerToken();
   const formData = new FormData();
 
@@ -189,18 +201,10 @@ export async function uploadAndFetchTransloaditFile(file: File) {
     ? assembly
     : await waitForAssemblyCompletion(assemblyUrl, accessToken);
   const uploadedFile = resolveUploadedFile(completedAssembly);
-  const fileResponse = await fetch(uploadedFile.ssl_url!, {
-    method: "GET",
-  });
-
-  if (!fileResponse.ok) {
-    throw new TransloaditUploadError(
-      `Transloadit returned a file URL, but downloading it failed with status ${fileResponse.status}.`,
-    );
-  }
 
   return {
-    bytes: new Uint8Array(await fileResponse.arrayBuffer()),
+    assetId: completedAssembly.assembly_id ?? crypto.randomUUID(),
+    assetUrl: uploadedFile.ssl_url!,
     fileName: uploadedFile.name ?? file.name,
     mimeType: uploadedFile.mime ?? (file.type || "application/octet-stream"),
     sizeBytes: uploadedFile.size ?? file.size,

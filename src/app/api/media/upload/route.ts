@@ -46,7 +46,9 @@ export async function POST(request: Request) {
     const message =
       error instanceof TransloaditUploadError
         ? error.message
-        : "Media upload failed while storing the asset.";
+        : error instanceof Error
+          ? error.message
+          : "Media upload failed while storing the asset.";
 
     return NextResponse.json(
       {
