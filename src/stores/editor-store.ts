@@ -628,6 +628,16 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           y: 120 + nextIndex * 42,
         },
     });
+    const nextNodes = [
+      ...nodes.map((node) => ({
+        ...node,
+        selected: false,
+      })),
+      {
+        ...newNode,
+        selected: true,
+      },
+    ];
 
     set({
       ...createDirtyState(`Added ${newNode.data.title}.`),
@@ -637,7 +647,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         ...nodeRuntime,
         [newNode.id]: { status: "idle" },
       },
-      nodes: [...nodes, newNode],
+      nodes: nextNodes,
     });
   },
   buildWorkflowDocument: () => {

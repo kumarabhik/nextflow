@@ -13,11 +13,22 @@ const catalogByType = Object.fromEntries(
   quickNodeCatalog.map((node) => [node.type, node]),
 ) as Record<QuickNodeType, (typeof quickNodeCatalog)[number]>;
 
+function withDefinedOverrides<T extends object>(overrides?: Partial<T>) {
+  if (!overrides) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(overrides).filter(([, value]) => value !== undefined),
+  ) as Partial<T>;
+}
+
 function createNodeData(
   kind: QuickNodeType,
   overrides?: Partial<WorkflowNodeData>,
 ): WorkflowNodeData {
   const catalog = catalogByType[kind];
+  const safeOverrides = withDefinedOverrides<WorkflowNodeData>(overrides);
 
   const shared = {
     kind,
@@ -36,7 +47,7 @@ function createNodeData(
         inputPorts: [],
         outputPorts: [{ id: "text", label: "text", kind: "text" }],
         textValue: "You are a creative marketing assistant.",
-        ...overrides,
+        ...safeOverrides,
       };
     case "upload-image":
       return {
@@ -51,7 +62,7 @@ function createNodeData(
         mediaDataUrl: undefined,
         mediaMimeType: undefined,
         mediaUrl: undefined,
-        ...overrides,
+        ...safeOverrides,
       };
     case "upload-video":
       return {
@@ -66,7 +77,7 @@ function createNodeData(
         mediaDataUrl: undefined,
         mediaMimeType: undefined,
         mediaUrl: undefined,
-        ...overrides,
+        ...safeOverrides,
       };
     case "run-llm":
       return {
@@ -101,7 +112,7 @@ function createNodeData(
         systemPromptValue: "You are a creative strategist. Keep the output concise.",
         userMessageValue: "Describe this product in a premium, social-ready tone.",
         resultText: "Inline LLM response will render here after execution is connected.",
-        ...overrides,
+        ...safeOverrides,
       };
     case "crop-image":
       return {
@@ -147,7 +158,7 @@ function createNodeData(
         yPercent: "0",
         widthPercent: "100",
         heightPercent: "100",
-        ...overrides,
+        ...safeOverrides,
       };
     case "extract-frame":
       return {
@@ -172,7 +183,7 @@ function createNodeData(
         ],
         outputPorts: [{ id: "output", label: "output", kind: "image" }],
         timestampValue: "50%",
-        ...overrides,
+        ...safeOverrides,
       };
   }
 }
