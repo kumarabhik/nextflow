@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   Background,
   BackgroundVariant,
@@ -33,7 +33,9 @@ function FlowCanvasInner() {
   const onConnect = useEditorStore((state) => state.onConnect);
   const onEdgesChange = useEditorStore((state) => state.onEdgesChange);
   const onNodesChange = useEditorStore((state) => state.onNodesChange);
-  const { fitView, screenToFlowPosition } = useReactFlow<WorkflowNode, WorkflowEdge>();
+  const { fitView, screenToFlowPosition, setCenter } =
+    useReactFlow<WorkflowNode, WorkflowEdge>();
+  const previousNodeCountRef = useRef(nodes.length);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -44,6 +46,28 @@ function FlowCanvasInner() {
       window.clearTimeout(timer);
     };
   }, [fitView]);
+
+  useEffect(() => {
+    const previousCount = previousNodeCountRef.current;
+
+    if (nodes.length > previousCount) {
+      const selectedNode = nodes.find((node) => node.selected);
+
+      if (selectedNode) {
+        const centerX = selectedNode.position.x + (selectedNode.width ?? 84) / 2;
+        const centerY = selectedNode.position.y + (selectedNode.height ?? 84) / 2;
+
+        window.setTimeout(() => {
+          void setCenter(centerX, centerY, {
+            duration: 320,
+            zoom: 0.92,
+          });
+        }, 40);
+      }
+    }
+
+    previousNodeCountRef.current = nodes.length;
+  }, [nodes, setCenter]);
 
   return (
     <section className="nextflow-editor-backdrop relative flex h-[68vh] min-h-[68vh] flex-1 overflow-hidden xl:h-full xl:min-h-0">
