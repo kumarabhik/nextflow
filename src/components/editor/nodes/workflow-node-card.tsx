@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, type ReactNode } from "react";
+import { memo, type MouseEvent, type ReactNode } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import {
   Bot,
@@ -225,6 +225,11 @@ function PreviewPortPill({
   );
 }
 
+function stopCanvasInteraction(event: MouseEvent<HTMLElement>) {
+  event.preventDefault();
+  event.stopPropagation();
+}
+
 function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNode>) {
   const deleteNode = useEditorStore((state) => state.deleteNode);
   const nodeRuntime = useEditorStore((state) => state.nodeRuntime[id] ?? { status: "idle" });
@@ -243,6 +248,11 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
 
   const updateField = (patch: Partial<typeof data>) => {
     updateNodeData(id, patch);
+  };
+
+  const handleDelete = (event: MouseEvent<HTMLElement>) => {
+    stopCanvasInteraction(event);
+    deleteNode(id);
   };
 
   const onFileChange = async (file: File | null) => {
@@ -329,11 +339,9 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
         {selected ? (
           <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center rounded-xl border border-white/10 bg-[#0f131a]/96 px-3 py-2 shadow-2xl shadow-black/40 backdrop-blur">
             <button
-              className="rounded-lg border border-red-400/25 bg-red-400/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-red-100 transition-all hover:bg-red-400/20 hover:shadow-lg hover:shadow-red-500/10"
-              onClick={(event) => {
-                event.stopPropagation();
-                deleteNode(id);
-              }}
+              className="nodrag nopan nowheel rounded-lg border border-red-400/25 bg-red-400/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-red-100 transition-all hover:bg-red-400/20 hover:shadow-lg hover:shadow-red-500/10"
+              onClick={handleDelete}
+              onMouseDown={stopCanvasInteraction}
               type="button"
             >
               <Trash2 className="mr-1.5 inline h-3.5 w-3.5" />
@@ -344,6 +352,7 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
 
         <button
           className={cn(
+            "nodrag nopan nowheel",
             "relative grid h-[84px] w-[84px] place-items-center overflow-hidden rounded-2xl border bg-[#10131a]/96 text-white shadow-2xl shadow-black/40 transition-all duration-300 hover:scale-110 hover:shadow-cyan-500/10",
             selected
               ? "border-cyan-300/70 shadow-cyan-500/20"
@@ -358,9 +367,10 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
             nodeRuntime.status === "skipped" && "border-white/15 opacity-90",
           )}
           onClick={(event) => {
-            event.stopPropagation();
+            stopCanvasInteraction(event);
             toggleNodeExpanded(id, true);
           }}
+          onMouseDown={stopCanvasInteraction}
           type="button"
         >
           {data.inputPorts.map((port, index) => (
@@ -467,11 +477,9 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
       {selected ? (
         <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center rounded-xl border border-white/10 bg-[#0f131a]/96 px-3 py-2 shadow-2xl shadow-black/40 backdrop-blur">
           <button
-            className="rounded-lg border border-red-400/25 bg-red-400/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-red-100 transition-all hover:bg-red-400/20 hover:shadow-lg hover:shadow-red-500/10"
-            onClick={(event) => {
-              event.stopPropagation();
-              deleteNode(id);
-            }}
+            className="nodrag nopan nowheel rounded-lg border border-red-400/25 bg-red-400/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-red-100 transition-all hover:bg-red-400/20 hover:shadow-lg hover:shadow-red-500/10"
+            onClick={handleDelete}
+            onMouseDown={stopCanvasInteraction}
             type="button"
           >
             <Trash2 className="mr-1.5 inline h-3.5 w-3.5" />
@@ -483,13 +491,15 @@ function WorkflowNodeCardComponent({ id, data, selected }: NodeProps<WorkflowNod
       <div className="flex items-start gap-3">
         <button
           className={cn(
+            "nodrag nopan nowheel",
             "grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br text-slate-950 shadow-lg",
             data.accent,
           )}
           onClick={(event) => {
-            event.stopPropagation();
+            stopCanvasInteraction(event);
             toggleNodeExpanded(id, false);
           }}
+          onMouseDown={stopCanvasInteraction}
           type="button"
         >
           {renderAvatar()}
